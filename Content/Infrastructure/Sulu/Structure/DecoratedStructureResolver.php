@@ -17,6 +17,9 @@ use Sulu\Bundle\ContentBundle\Content\Domain\Model\AuthorInterface;
 use Sulu\Bundle\WebsiteBundle\Resolver\StructureResolverInterface;
 use Sulu\Component\Content\Compat\StructureInterface;
 
+/**
+ * @internal
+ */
 class DecoratedStructureResolver implements StructureResolverInterface
 {
     public function __construct(private StructureResolverInterface $inner)
