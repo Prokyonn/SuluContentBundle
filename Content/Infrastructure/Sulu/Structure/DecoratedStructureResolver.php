@@ -11,11 +11,9 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sulu\Bundle\ContentBundle\Content\Application\StructureResolver;
+namespace Sulu\Bundle\ContentBundle\Content\Infrastructure\Sulu\Structure;
 
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\AuthorInterface;
-use Sulu\Bundle\ContentBundle\Content\Infrastructure\Sulu\Structure\ContentDocument;
-use Sulu\Bundle\ContentBundle\Content\Infrastructure\Sulu\Structure\ContentStructureBridge;
 use Sulu\Bundle\WebsiteBundle\Resolver\StructureResolverInterface;
 use Sulu\Component\Content\Compat\StructureInterface;
 
