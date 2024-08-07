@@ -16,7 +16,6 @@ namespace Sulu\Bundle\ContentBundle\Content\Infrastructure\Doctrine;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\ExcerptInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\TemplateInterface;
@@ -84,15 +83,14 @@ class DimensionContentQueryEnhancer
      *     title?: 'asc'|'desc',
      *     authored?: 'asc'|'desc',
      *     workflowPublished?: 'asc'|'desc',
-     *     author?: 'asc'|'desc',
-     * } $sortBy
+     * } $sortBys
      */
     public function addFilters(
         QueryBuilder $queryBuilder,
         string $contentRichEntityAlias,
         string $dimensionContentClassName,
         array $filters,
-        array $sortBy
+        array $sortBys
     ): void {
         $effectiveAttributes = $dimensionContentClassName::getEffectiveDimensionAttributes($filters);
 
@@ -192,22 +190,11 @@ class DimensionContentQueryEnhancer
         }
 
         // Sort by
-        foreach ($sortBy as $field => $order) {
-            if (!\in_array($field, ['title', 'authored', 'workflowPublished', 'author'], true)) {
+        foreach ($sortBys as $field => $order) {
+            if (!\in_array($field, ['title', 'authored', 'workflowPublished'], true)) {
                 continue;
             }
 
-            if ('author' === $field) {
-                $queryBuilder->leftJoin(
-                    Contact::class,
-                    'contact',
-                    Join::WITH,
-                    'filterDimensionContent.author = contact'
-                );
-                $queryBuilder->addOrderBy('contact.firstName', $order);
-
-                continue;
-            }
             $queryBuilder->addOrderBy('filterDimensionContent.' . $field, $order);
         }
     }

@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Sulu\Bundle\ContentBundle\Tests\Functional\Content\Infrastructure\Doctrine;
 
-use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContentBundle\Content\Application\ContentManager\ContentManagerInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentCollection;
 use Sulu\Bundle\ContentBundle\Content\Infrastructure\Doctrine\DimensionContentQueryEnhancer;
@@ -590,70 +589,5 @@ class DimensionContentQueryEnhancerTest extends SuluTestCase
         /** @var ExampleDimensionContent $exampleDimensionContent3 */
         $exampleDimensionContent3 = $this->contentManager->resolve($result[2], ['locale' => 'en', 'stage' => 'draft']);
         $this->assertSame('2020-03-01', $exampleDimensionContent3->getWorkflowPublished()?->format('Y-m-d'));
-    }
-
-    public function testSortByAuthor(): void
-    {
-        static::purgeDatabase();
-
-        $contact = (new Contact())->setFirstName('A')->setLastName('Doe')->setFormOfAddress(0);
-        $contact2 = (new Contact())->setFirstName('B')->setLastName('Doe')->setFormOfAddress(0);
-        $contact3 = (new Contact())->setFirstName('C')->setLastName('Doe')->setFormOfAddress(0);
-        static::getEntityManager()->persist($contact);
-        static::getEntityManager()->persist($contact2);
-        static::getEntityManager()->persist($contact3);
-
-        $example = static::createExample();
-        $example2 = static::createExample();
-        $example3 = static::createExample();
-        static::createExampleContent($example, ['templateData' => ['title' => 'Example A'], 'author' => $contact]);
-        static::createExampleContent($example2, ['templateData' => ['title' => 'Example B'], 'author' => $contact2]);
-        static::createExampleContent($example3, ['templateData' => ['title' => 'Example C'], 'author' => $contact3]);
-        static::getEntityManager()->flush();
-        static::getEntityManager()->clear();
-
-        $result = \iterator_to_array(
-            $this->exampleRepository->findBy(
-                [
-                    'locale' => 'en',
-                    'stage' => 'draft',
-                ],
-                [
-                    'author' => 'asc',
-                ]
-            )
-        );
-        $this->assertCount(3, $result);
-        /** @var ExampleDimensionContent $exampleDimensionContent */
-        $exampleDimensionContent = $this->contentManager->resolve($result[0], ['locale' => 'en', 'stage' => 'draft']);
-        $this->assertSame($contact->getId(), $exampleDimensionContent->getAuthor()?->getId());
-        /** @var ExampleDimensionContent $exampleDimensionContent2 */
-        $exampleDimensionContent2 = $this->contentManager->resolve($result[1], ['locale' => 'en', 'stage' => 'draft']);
-        $this->assertSame($contact2->getId(), $exampleDimensionContent2->getAuthor()?->getId());
-        /** @var ExampleDimensionContent $exampleDimensionContent3 */
-        $exampleDimensionContent3 = $this->contentManager->resolve($result[2], ['locale' => 'en', 'stage' => 'draft']);
-        $this->assertSame($contact3->getId(), $exampleDimensionContent3->getAuthor()?->getId());
-
-        $result = \iterator_to_array(
-            $this->exampleRepository->findBy(
-                [
-                    'locale' => 'en',
-                    'stage' => 'draft',
-                ],
-                [
-                    'author' => 'desc',
-                ]
-            )
-        );
-        $this->assertCount(3, $result);
-        /** @var ExampleDimensionContent $exampleDimensionContent */
-        $exampleDimensionContent = $this->contentManager->resolve($result[2], ['locale' => 'en', 'stage' => 'draft']);
-        $this->assertSame($contact->getId(), $exampleDimensionContent->getAuthor()?->getId());
-        /** @var ExampleDimensionContent $exampleDimensionContent2 */
-        $exampleDimensionContent2 = $this->contentManager->resolve($result[1], ['locale' => 'en', 'stage' => 'draft']);
-        $this->assertSame($contact2->getId(), $exampleDimensionContent2->getAuthor()?->getId());
-        /** @var ExampleDimensionContent $exampleDimensionContent3 */
-        $exampleDimensionContent3 = $this->contentManager->resolve($result[0], ['locale' => 'en', 'stage' => 'draft']);
-        $this->assertSame($contact3->getId(), $exampleDimensionContent3->getAuthor()?->getId());
     }
 }
