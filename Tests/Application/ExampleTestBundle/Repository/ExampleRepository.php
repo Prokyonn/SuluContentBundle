@@ -307,8 +307,12 @@ class ExampleRepository
             $queryBuilder->setFirstResult($offset);
         }
 
-        if (\array_key_exists('locale', $filters) // should also work with locale = null
-            && \array_key_exists('stage', $filters)) {
+        if ((
+            \array_key_exists('locale', $filters) // should also work with locale = null
+            && \array_key_exists('stage', $filters)
+        )
+        || ([] === $filters && [] !== $sortBy) // if no filters are set, but sortBy is set
+        ) {
             $this->dimensionContentQueryEnhancer->addFilters(
                 $queryBuilder,
                 'example',
