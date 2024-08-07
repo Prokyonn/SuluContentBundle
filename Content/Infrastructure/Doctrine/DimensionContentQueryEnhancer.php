@@ -213,21 +213,6 @@ class DimensionContentQueryEnhancer
     }
 
     /**
-     * @param array{
-     *     title?: 'asc'|'desc',
-     *     authored?: 'asc'|'desc',
-     *     workflowPublished?: 'asc'|'desc',
-     * } $sortBy
-     */
-    public function addSortBy(
-        QueryBuilder $queryBuilder,
-        string $contentRichEntityAlias,
-        string $dimensionContentClassName,
-        array $sortBy
-    ): void {
-    }
-
-    /**
      * @param int[]|string[] $parameters
      * @param 'AND'|'OR' $operator
      */

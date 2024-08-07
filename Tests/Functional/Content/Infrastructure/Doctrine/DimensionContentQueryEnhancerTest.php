@@ -401,6 +401,35 @@ class DimensionContentQueryEnhancerTest extends SuluTestCase
         ]));
     }
 
+    public function testSortByInvalidField(): void
+    {
+        static::purgeDatabase();
+
+        $example = static::createExample();
+        $example2 = static::createExample();
+        $example3 = static::createExample();
+        static::createExampleContent($example, ['title' => 'Example A', 'templateKey' => 'a']);
+        static::createExampleContent($example2, ['title' => 'Example B', 'templateKey' => 'b']);
+        static::createExampleContent($example3, ['title' => 'Example C', 'templateKey' => 'c']);
+        static::getEntityManager()->flush();
+        static::getEntityManager()->clear();
+
+        $unsortedResult = \iterator_to_array($this->exampleRepository->findBy(
+            [
+                'locale' => 'en',
+                'stage' => 'draft',
+            ]
+        ));
+
+        foreach ($this->exampleRepository->findBy(['locale' => 'en', 'stage' => 'draft'], ['invalid' => 'asc']) as $key => $example) {
+            self::assertSame($unsortedResult[$key]->getId(), $example->getId());
+        }
+
+        foreach ($this->exampleRepository->findBy(['locale' => 'en', 'stage' => 'draft'], ['invalid' => 'desc']) as $key => $example) {
+            self::assertSame($unsortedResult[$key]->getId(), $example->getId());
+        }
+    }
+
     public function testSortByTitle(): void
     {
         static::purgeDatabase();
