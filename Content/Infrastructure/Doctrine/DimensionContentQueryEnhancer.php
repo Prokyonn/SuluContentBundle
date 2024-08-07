@@ -16,6 +16,7 @@ namespace Sulu\Bundle\ContentBundle\Content\Infrastructure\Doctrine;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Sulu\Bundle\ContactBundle\Entity\Contact;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\ExcerptInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\TemplateInterface;
@@ -79,12 +80,19 @@ class DimensionContentQueryEnhancer
      *     templateKeys?: string[],
      *     loadGhost?: bool,
      * } $filters
+     * @param array{
+     *     title?: 'asc'|'desc',
+     *     authored?: 'asc'|'desc',
+     *     workflowPublished?: 'asc'|'desc',
+     *     author?: 'asc'|'desc',
+     * } $sortBy
      */
     public function addFilters(
         QueryBuilder $queryBuilder,
         string $contentRichEntityAlias,
         string $dimensionContentClassName,
-        array $filters
+        array $filters,
+        array $sortBy
     ): void {
         $effectiveAttributes = $dimensionContentClassName::getEffectiveDimensionAttributes($filters);
 
@@ -92,7 +100,7 @@ class DimensionContentQueryEnhancer
             $dimensionContentClassName,
             'filterDimensionContent',
             Join::WITH,
-            'filterDimensionContent.' . $contentRichEntityAlias . ' = ' . $contentRichEntityAlias . ''
+            'filterDimensionContent.' . $contentRichEntityAlias . ' = ' . $contentRichEntityAlias
         );
 
         foreach ($effectiveAttributes as $key => $value) {
@@ -182,6 +190,41 @@ class DimensionContentQueryEnhancer
                     ->setParameter('templateKeys', $templateKeys);
             }
         }
+
+        // Sort by
+        foreach ($sortBy as $field => $order) {
+            if (!\in_array($field, ['title', 'authored', 'workflowPublished', 'author'], true)) {
+                continue;
+            }
+
+            if ('author' === $field) {
+                $queryBuilder->leftJoin(
+                    Contact::class,
+                    'contact',
+                    Join::WITH,
+                    'filterDimensionContent.author = contact'
+                );
+                $queryBuilder->addOrderBy('contact.firstName', $order);
+
+                continue;
+            }
+            $queryBuilder->addOrderBy('filterDimensionContent.' . $field, $order);
+        }
+    }
+
+    /**
+     * @param array{
+     *     title?: 'asc'|'desc',
+     *     authored?: 'asc'|'desc',
+     *     workflowPublished?: 'asc'|'desc',
+     * } $sortBy
+     */
+    public function addSortBy(
+        QueryBuilder $queryBuilder,
+        string $contentRichEntityAlias,
+        string $dimensionContentClassName,
+        array $sortBy
+    ): void {
     }
 
     /**

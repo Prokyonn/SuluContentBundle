@@ -313,7 +313,8 @@ class ExampleRepository
                 $queryBuilder,
                 'example',
                 ExampleDimensionContent::class,
-                $filters
+                $filters,
+                $sortBy
             );
         }
 
