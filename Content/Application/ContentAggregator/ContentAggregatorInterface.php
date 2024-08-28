@@ -11,12 +11,12 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sulu\Bundle\ContentBundle\Content\Application\ContentResolver;
+namespace Sulu\Bundle\ContentBundle\Content\Application\ContentAggregator;
 
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\ContentRichEntityInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentInterface;
 
-interface ContentResolverInterface
+interface ContentAggregatorInterface
 {
     /**
      * @template T of DimensionContentInterface
@@ -24,7 +24,7 @@ interface ContentResolverInterface
      * @param ContentRichEntityInterface<T> $contentRichEntity
      * @param mixed[] $dimensionAttributes
      *
-     * @return T
+     * @return DimensionContentInterface
      */
-    public function resolve(ContentRichEntityInterface $contentRichEntity, array $dimensionAttributes): DimensionContentInterface;
+    public function aggregate(ContentRichEntityInterface $contentRichEntity, array $dimensionAttributes): DimensionContentInterface;
 }

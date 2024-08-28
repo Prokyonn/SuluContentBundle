@@ -15,9 +15,8 @@ namespace Sulu\Bundle\ContentBundle\Tests\Unit\Content\Application\ContentResolv
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentAggregator\ContentAggregatorInterface;
 use Sulu\Bundle\ContentBundle\Content\Application\ContentMerger\ContentMergerInterface;
-use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\ContentResolver;
-use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\ContentResolverInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Exception\ContentNotFoundException;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentCollection;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentInterface;
@@ -32,8 +31,8 @@ class ContentResolverTest extends TestCase
     protected function createContentResolverInstance(
         DimensionContentRepositoryInterface $dimensionContentRepository,
         ContentMergerInterface $contentMerger
-    ): ContentResolverInterface {
-        return new ContentResolver(
+    ): ContentAggregatorInterface {
+        return new \Sulu\Bundle\ContentBundle\Content\Application\ContentAggregator\ContentAggregator(
             $dimensionContentRepository,
             $contentMerger
         );
@@ -85,7 +84,7 @@ class ContentResolverTest extends TestCase
             $contentMerger->reveal()
         );
 
-        $this->assertSame($mergedDimensionContent->reveal(), $contentResolver->resolve($example, $attributes));
+        $this->assertSame($mergedDimensionContent->reveal(), $contentResolver->aggregate($example, $attributes));
     }
 
     public function testResolveNotFound(): void
@@ -120,6 +119,6 @@ class ContentResolverTest extends TestCase
             $contentMerger->reveal()
         );
 
-        $contentResolver->resolve($example, $attributes);
+        $contentResolver->aggregate($example, $attributes);
     }
 }
