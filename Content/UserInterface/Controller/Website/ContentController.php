@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Sulu\Bundle\ContentBundle\Content\UserInterface\Controller\Website;
 
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\ContentResolverInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentInterface;
 use Sulu\Bundle\PreviewBundle\Preview\Preview;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,6 +30,10 @@ use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
  */
 class ContentController extends AbstractController
 {
+    public function __construct(private ContentResolverInterface $contentResolver)
+    {
+    }
+
     /**
      * @param T $object
      */
@@ -36,14 +41,14 @@ class ContentController extends AbstractController
         Request $request,
         DimensionContentInterface $object,
         string $view, // TODO maybe inject metadata where we also get the cachelifetime from
-        bool $preview,
-        bool $partial,
+        bool $preview = false,
+        bool $partial = false,
     ): Response {
         $requestFormat = $request->getRequestFormat() ?? 'html';
 
-        $parameters = $this->resolveSuluParameters($object, $requestFormat === 'json');
+        $parameters = $this->resolveSuluParameters($object, 'json' === $requestFormat);
 
-        if ($requestFormat === 'json') {
+        if ('json' === $requestFormat) {
             $response = new JsonResponse($parameters);
         } else {
             $response = new Response($this->renderSuluView($view, $requestFormat, $parameters, $preview, $partial));
@@ -64,11 +69,16 @@ class ContentController extends AbstractController
      */
     protected function resolveSuluParameters(DimensionContentInterface $object, bool $normalize): array
     {
-        return [
-            'resource' => $object->getResource(), // TODO normalize JSON response
+        if (false === $normalize) {
+            return $this->contentResolver->resolve($object);
+        }
 
-            // TODO resolve content
-        ];
+        return []; // TODO
+        //        return [
+        //            'resource' => $object->getResource(), // TODO normalize JSON response
+        //
+        //            // TODO resolve content
+        //        ];
     }
 
     /**

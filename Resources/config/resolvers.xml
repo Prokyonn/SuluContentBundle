@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <!-- Content Resolver -->
+        <service id="sulu_content.content_resolver"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\ContentResolver">
+            <argument type="service" id="sulu_content.template_resolver"/>
+            <argument type="service" id="sulu_content.resource_loader_provider"/>
+        </service>
+
+        <!-- Template Resolvers -->
+        <service id="sulu_content.template_resolver"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\TemplateResolver\TemplateResolver">
+            <argument type="service" id="sulu_admin.structure_form_metadata_loader"/>
+            <argument type="service" id="sulu_content.metadata_resolver"/>
+        </service>
+
+        <!--        TODO EXCERPT / SEO -->
+
+        <!-- Metadata Resolver -->
+        <service id="sulu_content.metadata_resolver"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\MetadataResolver\MetadataResolver">
+            <argument type="service" id="sulu_content.property_resolver_provider"/>
+        </service>
+
+        <!-- Property Resolvers -->
+        <service id="sulu_content.property_resolver_provider"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\PropertyResolverProvider">
+            <argument
+                type="tagged"
+                tag="sulu_content.property_resolver"
+                default-index-method="getType"
+                index-by="type"
+            />
+        </service>
+
+        <service id="sulu_content.property_resolver.media_selection"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\MediaSelectionPropertyResolver">
+            <tag name="sulu_content.property_resolver"/>
+        </service>
+
+        <service id="sulu_content.property_resolver.default"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\DefaultPropertyResolver">
+            <tag name="sulu_content.property_resolver"/>
+        </service>
+
+        <service id="sulu_content.property_resolver.block"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\BlockPropertyResolver">
+            <call method="setMetadataResolver">
+                <argument type="service" id="sulu_content.metadata_resolver"/>
+            </call>
+
+            <tag name="sulu_content.property_resolver"/>
+        </service>
+    </services>
+</container>

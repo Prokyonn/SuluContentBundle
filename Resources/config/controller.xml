@@ -11,6 +11,7 @@
             <call method="setContainer">
                 <argument type="service" id="Psr\Container\ContainerInterface" />
             </call>
+            <argument type="service" id="sulu_content.content_resolver" />
         </service>
 
         <service id="Sulu\Bundle\ContentBundle\Content\UserInterface\Controller\Website\ContentController" alias="sulu_content.content_controller" public="true" />
