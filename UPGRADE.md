@@ -23,9 +23,9 @@ public function resolve(ContentRichEntityInterface $contentRichEntity, array $di
 public function aggregate(ContentRichEntityInterface $contentRichEntity, array $dimensionAttributes): DimensionContentInterface;
 ```
 
-### Require PHP 8.1
+### Require PHP 8.0
 
-The SuluContentBundle now requires atleast PHP 8.0.
+The SuluContentBundle now requires at least PHP 8.0.
 
 ## 0.7.0
 
@@ -53,34 +53,34 @@ ALTER TABLE test_example_dimension_contents ADD ghostLocale VARCHAR(7) DEFAULT N
 
 -- Update ghostLocale:
 UPDATE test_example_dimension_contents dc -- replace `test_example_dimension_contents` with your table
-    INNER JOIN test_example_dimension_contents dc2 -- replace `test_example_dimension_contents` with your table
-ON dc2.stage = dc.stage
-    AND dc2.example_id = dc.example_id -- replace `example_id` with your relation
-    AND dc2.locale IS NOT NULL
-    SET dc.ghostLocale = dc2.locale
+INNER JOIN test_example_dimension_contents dc2 -- replace `test_example_dimension_contents` with your table
+    ON dc2.stage = dc.stage
+        AND dc2.example_id = dc.example_id -- replace `example_id` with your relation
+        AND dc2.locale IS NOT NULL
+SET dc.ghostLocale = dc2.locale
 WHERE
     dc.ghostLocale IS NULL
-  AND dc.locale IS NULL;
+    AND dc.locale IS NULL;
 
 -- Update availableLocales:
 UPDATE test_example_dimension_contents dc -- replace `test_example_dimension_contents` with your table
-    LEFT JOIN (
+LEFT JOIN (
     SELECT
-    dc3.stage,
-    dc3.example_id, -- replace `example_id` with your relation
-    CONCAT('["', REPLACE(GROUP_CONCAT(dc3.locale), ',', '","'), '"]') as availableLocales
+        dc3.stage,
+        dc3.example_id, -- replace `example_id` with your relation
+        CONCAT('["', REPLACE(GROUP_CONCAT(dc3.locale), ',', '","'), '"]') as availableLocales
     FROM test_example_dimension_contents dc3 -- replace `test_example_dimension_contents` with your table
-    WHERE locale IS NOT NULL
-    GROUP BY
-    dc3.example_id, -- replace `example_id` with your relation
-    dc3.stage
+         WHERE locale IS NOT NULL
+         GROUP BY
+             dc3.example_id, -- replace `example_id` with your relation
+             dc3.stage
     ) as dc4 ON
-    dc4.example_id = dc.example_id -- replace `example_id` with your relation
-    AND dc4.stage = dc.stage
-    SET dc.availableLocales = dc4.availableLocales
+        dc4.example_id = dc.example_id -- replace `example_id` with your relation
+        AND dc4.stage = dc.stage
+SET dc.availableLocales = dc4.availableLocales
 WHERE
     dc.availableLocales IS NULL
-  AND dc.locale IS NULL;
+    AND dc.locale IS NULL;
 ```
 
 ### ContentMapperInterface changed
@@ -156,18 +156,18 @@ CREATE INDEX idx_workflow_published ON <your_entity>_content (workflowPublished)
 
 ### Adjusted ContentDataMapper to accept DimensionContentCollection instead of separate objects
 
-The `ContentDataMapper` service was adjusted to accept a `DimensionContentCollection` parameter instead of
-a `unlocalizedObject` and an optional `localizedObject` parameter. This makes the interfaces more flexible
+The `ContentDataMapper` service was adjusted to accept a `DimensionContentCollection` parameter instead of 
+a `unlocalizedObject` and an optional `localizedObject` parameter. This makes the interfaces more flexible 
 and consistent to other parts of the bundle.
 
 ### Adjusted DataMapperInterface to accept DimensionContentCollection instead of separate objects
 
-The `DataMapperInterface` and all services that implement the interface were adjusted to accept a
+The `DataMapperInterface` and all services that implement the interface were adjusted to accept a 
 `DimensionContentCollection` parameter instead of a `unlocalizedObject` and an optional `localizedObject` parameter.
 
 ### Removed getUnlocalizedDimensionContent and getLocalizedDimensionContent from DimensionContentCollectionInterface
 
-To simplify the interface, the `getUnlocalizedDimensionContent` method and `getLocalizedDimensionContent` method
+To simplify the interface, the `getUnlocalizedDimensionContent` method and `getLocalizedDimensionContent` method 
 were removed from the `DimensionContentCollectionInterface`. The `getDimensionContent` can be used as a
 replacement like this:
 
@@ -195,8 +195,8 @@ ALTER TABLE test_example_dimension_contents ADD stage VARCHAR(16) DEFAULT NULL, 
 
 # Migrate data to new fields
 UPDATE test_example_dimension_contents myContentDimension
-    INNER JOIN cn_dimensions dimension ON dimension.no = myContentDimension.dimension_id
-    SET myContentDimension.stage = dimension.stage, myContentDimension.locale = dimension.locale;
+INNER JOIN cn_dimensions dimension ON dimension.no = myContentDimension.dimension_id
+SET myContentDimension.stage = dimension.stage, myContentDimension.locale = dimension.locale;
 
 # Remove nullable from stage field
 ALTER TABLE test_example_dimension_contents CHANGE stage stage VARCHAR(16) NOT NULL;
@@ -211,7 +211,7 @@ DROP TABLE cn_dimensions;
 ```
 
 If you are using the `DoctrineMigrationBundle` you can also reuse the following migration class
-to migrate the data of you entity. Make sure to provide the correct `tableName`, `foreignKey`
+to migrate the data of you entity. Make sure to provide the correct `tableName`, `foreignKey` 
 and `indexName` before executing the migration.
 
 <details>
