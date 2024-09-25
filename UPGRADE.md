@@ -1,6 +1,6 @@
 # Upgrade
 
-## 0.8.0
+## 0.9.0
 
 ### ContentResolver renamed to ContentAggregator
 
@@ -22,6 +22,8 @@ public function resolve(ContentRichEntityInterface $contentRichEntity, array $di
 ```php
 public function aggregate(ContentRichEntityInterface $contentRichEntity, array $dimensionAttributes): DimensionContentInterface;
 ```
+
+## 0.8.0
 
 ### Require PHP 8.0
 
