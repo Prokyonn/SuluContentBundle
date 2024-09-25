@@ -24,7 +24,7 @@ interface ContentAggregatorInterface
      * @param ContentRichEntityInterface<T> $contentRichEntity
      * @param mixed[] $dimensionAttributes
      *
-     * @return DimensionContentInterface
+     * @return T
      */
     public function aggregate(ContentRichEntityInterface $contentRichEntity, array $dimensionAttributes): DimensionContentInterface;
 }
