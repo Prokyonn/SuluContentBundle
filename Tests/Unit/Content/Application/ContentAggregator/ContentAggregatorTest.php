@@ -11,10 +11,12 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sulu\Bundle\ContentBundle\Tests\Unit\Content\Application\ContentResolver;
+namespace Sulu\Bundle\ContentBundle\Tests\Unit\Content\Application\ContentAggregator;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentAggregator\ContentAggregator;
 use Sulu\Bundle\ContentBundle\Content\Application\ContentAggregator\ContentAggregatorInterface;
 use Sulu\Bundle\ContentBundle\Content\Application\ContentMerger\ContentMergerInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Exception\ContentNotFoundException;
@@ -24,21 +26,21 @@ use Sulu\Bundle\ContentBundle\Content\Domain\Repository\DimensionContentReposito
 use Sulu\Bundle\ContentBundle\Tests\Application\ExampleTestBundle\Entity\Example;
 use Sulu\Bundle\ContentBundle\Tests\Application\ExampleTestBundle\Entity\ExampleDimensionContent;
 
-class ContentResolverTest extends TestCase
+class ContentAggregatorTest extends TestCase
 {
-    use \Prophecy\PhpUnit\ProphecyTrait;
+    use ProphecyTrait;
 
-    protected function createContentResolverInstance(
+    protected function createContentAggregatorInstance(
         DimensionContentRepositoryInterface $dimensionContentRepository,
         ContentMergerInterface $contentMerger
     ): ContentAggregatorInterface {
-        return new \Sulu\Bundle\ContentBundle\Content\Application\ContentAggregator\ContentAggregator(
+        return new ContentAggregator(
             $dimensionContentRepository,
             $contentMerger
         );
     }
 
-    public function testResolve(): void
+    public function testAggregate(): void
     {
         $example = new Example();
 
@@ -79,15 +81,15 @@ class ContentResolverTest extends TestCase
             ->willReturn($mergedDimensionContent->reveal())
             ->shouldBeCalled();
 
-        $contentResolver = $this->createContentResolverInstance(
+        $contentAggregator = $this->createContentAggregatorInstance(
             $dimensionContentRepository->reveal(),
             $contentMerger->reveal()
         );
 
-        $this->assertSame($mergedDimensionContent->reveal(), $contentResolver->aggregate($example, $attributes));
+        $this->assertSame($mergedDimensionContent->reveal(), $contentAggregator->aggregate($example, $attributes));
     }
 
-    public function testResolveNotFound(): void
+    public function testAggregateNotFound(): void
     {
         $this->expectException(ContentNotFoundException::class);
 
@@ -114,11 +116,11 @@ class ContentResolverTest extends TestCase
         $contentMerger = $this->prophesize(ContentMergerInterface::class);
         $contentMerger->merge($dimensionContentCollection)->willReturn(Argument::cetera())->shouldNotBeCalled();
 
-        $contentResolver = $this->createContentResolverInstance(
+        $contentAggregator = $this->createContentAggregatorInstance(
             $dimensionContentRepository->reveal(),
             $contentMerger->reveal()
         );
 
-        $contentResolver->aggregate($example, $attributes);
+        $contentAggregator->aggregate($example, $attributes);
     }
 }
