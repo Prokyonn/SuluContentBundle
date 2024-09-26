@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver;
 
-use Sulu\Bundle\ContentBundle\Content\Application\ContentObjects\ContentView;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
 
 class DefaultPropertyResolver implements PropertyResolverInterface
 {
@@ -25,10 +25,5 @@ class DefaultPropertyResolver implements PropertyResolverInterface
     public static function getType(): string
     {
         return 'default';
-    }
-
-    public function getDefaultResourceLoader(): ?string
-    {
-        return null;
     }
 }

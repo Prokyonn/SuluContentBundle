@@ -11,17 +11,20 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sulu\Bundle\ContentBundle\Content\Application\ContentObjects;
+namespace Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value;
 
+/**
+ * @internal This class is intended for internal use only within the package/library. Modifying or depending on this class may result in unexpected behavior and is not supported.
+ */
 class ResolvableResource
 {
     public function __construct(
-        private string $id,
+        private string|int $id,
         private string $resourceLoaderKey,
     ) {
     }
 
-    public function getId(): string
+    public function getId(): string|int
     {
         return $this->id;
     }

@@ -11,23 +11,18 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sulu\Bundle\ContentBundle\Content\Application\ContentResolver;
+namespace Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Resolver;
 
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\ContentRichEntityInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentInterface;
 
-interface ContentResolverInterface
+interface ResolverInterface
 {
     /**
      * @template T of ContentRichEntityInterface
      *
      * @param DimensionContentInterface<T> $dimensionContent
-     *
-     * @return array{
-     *     resource: object,
-     *     content: mixed,
-     *     view: mixed[]
-     * }
      */
-    public function resolve(DimensionContentInterface $dimensionContent): array;
+    public function resolve(DimensionContentInterface $dimensionContent): ContentView;
 }

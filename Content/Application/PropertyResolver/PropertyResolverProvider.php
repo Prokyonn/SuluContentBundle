@@ -20,7 +20,10 @@ class PropertyResolverProvider
      */
     private array $propertyResolvers;
 
-    public function __construct(\Traversable $propertyResolvers)
+    /**
+     * @param iterable<PropertyResolverInterface> $propertyResolvers
+     */
+    public function __construct(iterable $propertyResolvers)
     {
         $this->propertyResolvers = \iterator_to_array($propertyResolvers);
     }

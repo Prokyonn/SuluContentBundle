@@ -13,12 +13,14 @@ declare(strict_types=1);
 
 namespace Sulu\Bundle\ContentBundle\Content\Application\MetadataResolver;
 
-use Sulu\Bundle\AdminBundle\Metadata\FormMetadata\FormMetadata;
 use Sulu\Bundle\AdminBundle\Metadata\FormMetadata\ItemMetadata;
 use Sulu\Bundle\AdminBundle\Metadata\FormMetadata\SectionMetadata;
-use Sulu\Bundle\ContentBundle\Content\Application\ContentObjects\ContentView;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
 use Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\PropertyResolverProvider;
 
+/**
+ * @internal This class is intended for internal use only within the library. Modifying or depending on this class may result in unexpected behavior and is not supported.
+ */
 class MetadataResolver
 {
     public function __construct(
@@ -28,6 +30,7 @@ class MetadataResolver
 
     /**
      * @param ItemMetadata[] $items
+     * @param mixed[] $data
      *
      * @return ContentView[]
      */
@@ -37,7 +40,7 @@ class MetadataResolver
         foreach ($items as $item) {
             $name = $item->getName();
             $type = $item->getType();
-            if ($item instanceof SectionMetadata || $item instanceof FormMetadata) {
+            if ($item instanceof SectionMetadata) {
                 $contentViews = \array_merge(
                     $contentViews,
                     $this->resolveItems($item->getItems(), $data, $locale)
@@ -50,6 +53,9 @@ class MetadataResolver
         return $contentViews;
     }
 
+    /**
+     * @param mixed[] $params
+     */
     private function resolveProperty(string $type, mixed $data, string $locale, array $params = []): ContentView
     {
         $propertyResolver = $this->propertyResolverProvider->getPropertyResolver($type);

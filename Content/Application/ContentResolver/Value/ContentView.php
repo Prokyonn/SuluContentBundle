@@ -11,12 +11,14 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sulu\Bundle\ContentBundle\Content\Application\ContentObjects;
+namespace Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value;
 
+/**
+ * @internal This class is intended for internal use only within the package/library. Modifying or depending on this class may result in unexpected behavior and is not supported.
+ */
 class ContentView
 {
     /**
-     * @param mixed[] $content
      * @param mixed[] $view
      */
     private function __construct(
@@ -25,12 +27,18 @@ class ContentView
     ) {
     }
 
+    /**
+     * @param mixed[] $view
+     */
     public static function create(mixed $content, array $view): self
     {
         return new self($content, $view);
     }
 
-    public static function createResolvable(string $id, string $resourceLoaderKey, array $view): self
+    /**
+     * @param mixed[] $view
+     */
+    public static function createResolvable(string|int $id, string $resourceLoaderKey, array $view): self
     {
         $resolvableResources = [
             new ResolvableResource($id, $resourceLoaderKey),
@@ -39,6 +47,10 @@ class ContentView
         return new self($resolvableResources, $view);
     }
 
+    /**
+     * @param array<string|int> $ids
+     * @param mixed[] $view
+     */
     public static function createResolvables(array $ids, string $resourceLoaderKey, array $view): self
     {
         $resolvableResources = [];
@@ -55,18 +67,24 @@ class ContentView
         return $this->content;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getView(): array
     {
         return $this->view;
     }
 
-    public function setContent(array $content): self
+    public function setContent(mixed $content): self
     {
         $this->content = $content;
 
         return $this;
     }
 
+    /**
+     * @param mixed[] $view
+     */
     public function setView(array $view): self
     {
         $this->view = $view;

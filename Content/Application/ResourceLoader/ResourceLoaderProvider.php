@@ -20,7 +20,10 @@ class ResourceLoaderProvider
      */
     private array $resourceLoaders;
 
-    public function __construct(\Traversable $resourceLoaders)
+    /**
+     * @param iterable<ResourceLoaderInterface> $resourceLoaders
+     */
+    public function __construct(iterable $resourceLoaders)
     {
         $this->resourceLoaders = \iterator_to_array($resourceLoaders);
     }

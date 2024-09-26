@@ -3,21 +3,44 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <!-- Content Resolver -->
+        <!-- main Content Resolver -->
         <service id="sulu_content.content_resolver"
                  class="Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\ContentResolver">
-            <argument type="service" id="sulu_content.template_resolver"/>
+            <argument
+                type="tagged_iterator"
+                tag="sulu_content.content_resolver"
+                index-by="type"
+            />
             <argument type="service" id="sulu_content.resource_loader_provider"/>
         </service>
+        <service id="Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\ContentResolverInterface" alias="sulu_content.content_resolver"/>
 
-        <!-- Template Resolvers -->
-        <service id="sulu_content.template_resolver"
-                 class="Sulu\Bundle\ContentBundle\Content\Application\TemplateResolver\TemplateResolver">
-            <argument type="service" id="sulu_admin.structure_form_metadata_loader"/>
+        <!-- Template Resolver -->
+        <service id="sulu_content.resolver.template"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Resolver\TemplateResolver">
+            <argument type="service" id="sulu_admin.form_metadata_provider"/>
             <argument type="service" id="sulu_content.metadata_resolver"/>
+
+            <tag name="sulu_content.content_resolver"/>
         </service>
 
-        <!--        TODO EXCERPT / SEO -->
+        <!-- Excerpt Resolver -->
+        <service id="sulu_content.resolver.excerpt"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Resolver\ExcerptResolver">
+            <argument type="service" id="sulu_admin.form_metadata_provider"/>
+            <argument type="service" id="sulu_content.metadata_resolver"/>
+
+            <tag name="sulu_content.content_resolver" type="excerpt"/>
+        </service>
+
+        <!-- Seo Resolver -->
+        <service id="sulu_content.resolver.seo"
+                 class="Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Resolver\SeoResolver">
+            <argument type="service" id="sulu_admin.form_metadata_provider"/>
+            <argument type="service" id="sulu_content.metadata_resolver"/>
+
+            <tag name="sulu_content.content_resolver" type="seo"/>
+        </service>
 
         <!-- Metadata Resolver -->
         <service id="sulu_content.metadata_resolver"
@@ -29,13 +52,14 @@
         <service id="sulu_content.property_resolver_provider"
                  class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\PropertyResolverProvider">
             <argument
-                type="tagged"
+                type="tagged_iterator"
                 tag="sulu_content.property_resolver"
                 default-index-method="getType"
                 index-by="type"
             />
         </service>
 
+        <!-- TODO move to media bundle -->
         <service id="sulu_content.property_resolver.media_selection"
                  class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\MediaSelectionPropertyResolver">
             <tag name="sulu_content.property_resolver"/>
@@ -46,6 +70,7 @@
             <tag name="sulu_content.property_resolver"/>
         </service>
 
+        <!-- TODO move to admin bundle -->
         <service id="sulu_content.property_resolver.block"
                  class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\BlockPropertyResolver">
             <call method="setMetadataResolver">

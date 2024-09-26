@@ -17,14 +17,16 @@ use Sulu\Bundle\MediaBundle\Media\Manager\MediaManagerInterface;
 
 class MediaResourceLoader implements ResourceLoaderInterface
 {
+    public const RESOURCE_LOADER_KEY = 'media';
+
     public function __construct(
         private MediaManagerInterface $mediaManager
     ) {
     }
 
-    public function load(array $ids, string $locale, array $params = []): array
+    public function load(array $ids, ?string $locale, array $params = []): array
     {
-        $result = $this->mediaManager->getByIds($ids, $locale);
+        $result = $this->mediaManager->getByIds($ids, (string) $locale);
 
         $mappedResult = [];
         foreach ($result as $media) {
@@ -34,8 +36,8 @@ class MediaResourceLoader implements ResourceLoaderInterface
         return $mappedResult;
     }
 
-    public function getType(): string
+    public static function getKey(): string
     {
-        return 'media';
+        return self::RESOURCE_LOADER_KEY;
     }
 }

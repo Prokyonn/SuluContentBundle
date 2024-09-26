@@ -14,6 +14,7 @@
             />
         </service>
 
+        <!-- TODO move to media bundle -->
         <service id="sulu_content.media_resource_loader"
         class="Sulu\Bundle\ContentBundle\Content\Application\ResourceLoader\MediaResourceLoader">
             <argument type="service" id="sulu_media.media_manager"/>

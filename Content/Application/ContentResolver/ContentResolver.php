@@ -13,23 +13,47 @@ declare(strict_types=1);
 
 namespace Sulu\Bundle\ContentBundle\Content\Application\ContentResolver;
 
-use Sulu\Bundle\ContentBundle\Content\Application\ContentObjects\ContentView;
-use Sulu\Bundle\ContentBundle\Content\Application\ContentObjects\ResolvableResource;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Resolver\ResolverInterface;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Resolver\TemplateResolver;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ResolvableResource;
 use Sulu\Bundle\ContentBundle\Content\Application\ResourceLoader\ResourceLoaderProvider;
-use Sulu\Bundle\ContentBundle\Content\Application\TemplateResolver\TemplateResolverInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentInterface;
 
 class ContentResolver implements ContentResolverInterface
 {
+    /**
+     * @param iterable<ResolverInterface> $contentResolvers
+     */
     public function __construct(
-        private TemplateResolverInterface $templateResolver,
+        private iterable $contentResolvers,
         private ResourceLoaderProvider $resourceLoaderProvider
     ) {
     }
 
+    /**
+     * @return array{
+     *      resource: object,
+     *      content: mixed,
+     *      view: mixed[]
+     *  }
+     */
     public function resolve(DimensionContentInterface $dimensionContent): array
     {
-        $contentViews = $this->templateResolver->resolve($dimensionContent);
+        $contentViews = [];
+        foreach ($this->contentResolvers as $key => $contentResolver) {
+            $contentView = $contentResolver->resolve($dimensionContent);
+
+            if ($contentResolver instanceof TemplateResolver) {
+                /** @var mixed[] $content */
+                $content = $contentView->getContent();
+                $contentViews = \array_merge($contentViews, $content);
+                continue;
+            }
+
+            $contentViews[$key] = $contentView;
+        }
+
         $result = $this->resolveContentViews($contentViews);
         $resources = $this->loadResolvableResources($result['resolvableResources'], $dimensionContent->getLocale());
         \array_walk_recursive($result['content'], function(&$value) use ($resources) {
@@ -46,9 +70,13 @@ class ContentResolver implements ContentResolverInterface
     }
 
     /**
-     * @param ContentView[]|mixed $contentViews
+     * @param ContentView[] $contentViews
      *
-     * @return mixed[]
+     * @return array{
+     *     content: mixed[],
+     *     view: mixed[],
+     *     resolvableResources: array<string, array<int|string>>
+     *     }
      */
     private function resolveContentViews(array $contentViews): array
     {
@@ -71,9 +99,11 @@ class ContentResolver implements ContentResolverInterface
     }
 
     /**
-     * @param array<string, int|string> $resolvableResourceIds
+     * @param array<string, array<int|string>> $resolvableResourceIds
+     *
+     * @return array<string, mixed[]>
      */
-    private function loadResolvableResources(array $resolvableResourceIds, string $locale): array
+    private function loadResolvableResources(array $resolvableResourceIds, ?string $locale): array
     {
         $resources = [];
         foreach ($resolvableResourceIds as $resourceLoaderKey => $ids) {
@@ -88,7 +118,14 @@ class ContentResolver implements ContentResolverInterface
         return $resources;
     }
 
-    private function resolveContentView(mixed $contentView, string $name): array
+    /**
+     * @return array{
+     *     content: mixed[],
+     *     view: mixed[],
+     *     resolvableResources: array<string, array<int|string>>
+     *     }
+     */
+    private function resolveContentView(ContentView $contentView, string $name): array
     {
         $resolvableResources = [];
         $content[$name] = $contentView->getContent();
@@ -127,7 +164,7 @@ class ContentResolver implements ContentResolverInterface
                     }
 
                     if ($value instanceof ContentView) {
-                        $result = $this->resolveContentView($value, $name);
+                        $result = $this->resolveContentView($value, $index);
                     } else {
                         $result['content'] = $value;
                         $result['view'] = [];

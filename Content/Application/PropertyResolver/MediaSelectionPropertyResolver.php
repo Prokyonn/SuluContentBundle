@@ -13,7 +13,8 @@ declare(strict_types=1);
 
 namespace Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver;
 
-use Sulu\Bundle\ContentBundle\Content\Application\ContentObjects\ContentView;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
+use Sulu\Bundle\ContentBundle\Content\Application\ResourceLoader\MediaResourceLoader;
 
 class MediaSelectionPropertyResolver implements PropertyResolverInterface
 {
@@ -23,9 +24,12 @@ class MediaSelectionPropertyResolver implements PropertyResolverInterface
             return ContentView::create([], ['ids' => []]);
         }
 
+        /** @var string $resourceLoaderKey */
+        $resourceLoaderKey = $params['resourceLoader'] ?? MediaResourceLoader::getKey();
+
         return ContentView::createResolvables(
             $data['ids'],
-            $params['resourceLoader'] ?? $this->getDefaultResourceLoader(),
+            $resourceLoaderKey,
             ['ids' => $data['ids']],
         );
     }
@@ -33,10 +37,5 @@ class MediaSelectionPropertyResolver implements PropertyResolverInterface
     public static function getType(): string
     {
         return 'media_selection';
-    }
-
-    public function getDefaultResourceLoader(): string
-    {
-        return 'media';
     }
 }

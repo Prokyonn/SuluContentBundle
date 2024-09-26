@@ -13,13 +13,14 @@ declare(strict_types=1);
 
 namespace Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver;
 
-use Sulu\Bundle\ContentBundle\Content\Application\ContentObjects\ContentView;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
 
 interface PropertyResolverInterface
 {
+    /**
+     * @param mixed[] $params
+     */
     public function resolve(mixed $data, string $locale, array $params = []): ContentView;
 
     public static function getType(): string;
-
-    public function getDefaultResourceLoader(): ?string;
 }

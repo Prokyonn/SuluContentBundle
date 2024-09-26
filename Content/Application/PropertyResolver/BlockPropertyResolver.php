@@ -14,21 +14,27 @@ declare(strict_types=1);
 namespace Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver;
 
 use Sulu\Bundle\AdminBundle\Metadata\FormMetadata\FieldMetadata;
-use Sulu\Bundle\ContentBundle\Content\Application\ContentObjects\ContentView;
+use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
 use Sulu\Bundle\ContentBundle\Content\Application\MetadataResolver\MetadataResolver;
 
 class BlockPropertyResolver implements PropertyResolverInterface
 {
-    private $metadataResolver;
+    private MetadataResolver $metadataResolver;
 
     /**
      * Prevent circular dependency by injecting the MetadataResolver after instantiation.
      */
-    public function setMetadataResolver(MetadataResolver $metadataResolver)
+    public function setMetadataResolver(MetadataResolver $metadataResolver): void
     {
         $this->metadataResolver = $metadataResolver;
     }
 
+    /**
+     * @param array{
+     *     type: string,
+     *     ...
+     * }[] $data
+     */
     public function resolve(mixed $data, string $locale, array $params = []): ContentView
     {
         /** @var FieldMetadata $metadata */
@@ -50,10 +56,5 @@ class BlockPropertyResolver implements PropertyResolverInterface
     public static function getType(): string
     {
         return 'block';
-    }
-
-    public function getDefaultResourceLoader(): ?string
-    {
-        return null;
     }
 }

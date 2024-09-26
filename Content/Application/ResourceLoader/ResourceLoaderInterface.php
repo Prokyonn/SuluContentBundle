@@ -16,9 +16,12 @@ namespace Sulu\Bundle\ContentBundle\Content\Application\ResourceLoader;
 interface ResourceLoaderInterface
 {
     /**
+     * @param array<int|string> $ids
+     * @param mixed[] $params
+     *
      * @return array<int|string, object> index must be the ID of the object
      */
-    public function load(array $ids, string $locale, array $params = []): array;
+    public function load(array $ids, ?string $locale, array $params = []): array;
 
-    public function getType(): string;
+    public static function getKey(): string;
 }
