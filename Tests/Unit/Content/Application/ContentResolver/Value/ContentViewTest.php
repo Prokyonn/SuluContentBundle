@@ -31,7 +31,13 @@ class ContentViewTest extends TestCase
     {
         $contentView = ContentView::createResolvable(5, 'resourceLoaderKey', ['view' => 'data']);
 
-        $this->assertSame([new ResolvableResource(5, 'resourceLoaderKey')], $contentView->getContent());
+        $content = $contentView->getContent();
+        $this->assertIsArray($content);
+        $this->assertCount(1, $content);
+        /** @var ResolvableResource $resolvable */
+        $resolvable = $content[0];
+        $this->assertSame(5, $resolvable->getId());
+        $this->assertSame('resourceLoaderKey', $resolvable->getResourceLoaderKey());
         $this->assertSame(['view' => 'data'], $contentView->getView());
     }
 
@@ -39,7 +45,13 @@ class ContentViewTest extends TestCase
     {
         $contentView = ContentView::createResolvables([5, 6], 'resourceLoaderKey', ['view' => 'data']);
 
-        $this->assertSame([new ResolvableResource(5, 'resourceLoaderKey'), new ResolvableResource(6, 'resourceLoaderKey')], $contentView->getContent());
+        /** @var ResolvableResource[] $resolvables */
+        $resolvables = $contentView->getContent();
+        $this->assertCount(2, $resolvables);
+        $this->assertSame(5, $resolvables[0]->getId());
+        $this->assertSame('resourceLoaderKey', $resolvables[0]->getResourceLoaderKey());
+        $this->assertSame(6, $resolvables[1]->getId());
+        $this->assertSame('resourceLoaderKey', $resolvables[1]->getResourceLoaderKey());
         $this->assertSame(['view' => 'data'], $contentView->getView());
     }
 

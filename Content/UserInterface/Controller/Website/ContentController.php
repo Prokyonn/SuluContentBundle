@@ -30,10 +30,6 @@ use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
  */
 class ContentController extends AbstractController
 {
-    public function __construct(private ContentResolverInterface $contentResolver)
-    {
-    }
-
     /**
      * @param T $object
      */
@@ -70,15 +66,10 @@ class ContentController extends AbstractController
     protected function resolveSuluParameters(DimensionContentInterface $object, bool $normalize): array
     {
         if (false === $normalize) {
-            return $this->contentResolver->resolve($object);
+            return $this->container->get('sulu_content.content_resolver')->resolve($object);
         }
 
-        return []; // TODO
-        //        return [
-        //            'resource' => $object->getResource(), // TODO normalize JSON response
-        //
-        //            // TODO resolve content
-        //        ];
+        return []; // TODO normalize JSON response
     }
 
     /**
@@ -108,5 +99,14 @@ class ContentController extends AbstractController
         }
 
         return $this->renderView($viewTemplate, $parameters);
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        $services = parent::getSubscribedServices();
+
+        $services['sulu_content.content_resolver'] = ContentResolverInterface::class;
+
+        return $services;
     }
 }

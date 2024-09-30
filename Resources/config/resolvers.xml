@@ -66,13 +66,13 @@
         </service>
 
         <service id="sulu_content.property_resolver.default"
-                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\DefaultPropertyResolver">
+                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\Resolver\DefaultPropertyResolver">
             <tag name="sulu_content.property_resolver"/>
         </service>
 
         <!-- TODO move to admin bundle -->
         <service id="sulu_content.property_resolver.block"
-                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\BlockPropertyResolver">
+                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\Resolver\BlockPropertyResolver">
             <call method="setMetadataResolver">
                 <argument type="service" id="sulu_content.metadata_resolver"/>
             </call>

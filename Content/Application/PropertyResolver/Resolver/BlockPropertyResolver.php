@@ -11,11 +11,12 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver;
+namespace Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\Resolver;
 
 use Sulu\Bundle\AdminBundle\Metadata\FormMetadata\FieldMetadata;
 use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
 use Sulu\Bundle\ContentBundle\Content\Application\MetadataResolver\MetadataResolver;
+use Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\PropertyResolverInterface;
 
 class BlockPropertyResolver implements PropertyResolverInterface
 {
