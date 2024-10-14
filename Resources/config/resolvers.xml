@@ -59,18 +59,11 @@
             />
         </service>
 
-        <!-- TODO move to media bundle -->
-        <service id="sulu_content.property_resolver.media_selection"
-                 class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\MediaSelectionPropertyResolver">
-            <tag name="sulu_content.property_resolver"/>
-        </service>
-
         <service id="sulu_content.property_resolver.default"
                  class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\Resolver\DefaultPropertyResolver">
             <tag name="sulu_content.property_resolver"/>
         </service>
 
-        <!-- TODO move to admin bundle -->
         <service id="sulu_content.property_resolver.block"
                  class="Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\Resolver\BlockPropertyResolver">
             <call method="setMetadataResolver">

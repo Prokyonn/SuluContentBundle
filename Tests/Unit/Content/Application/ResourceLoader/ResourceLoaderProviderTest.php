@@ -15,9 +15,9 @@ namespace Sulu\Bundle\ContentBundle\Tests\Unit\Content\Application\ResourceLoade
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Sulu\Bundle\ContentBundle\Content\Application\ResourceLoader\MediaResourceLoader;
 use Sulu\Bundle\ContentBundle\Content\Application\ResourceLoader\ResourceLoaderInterface;
 use Sulu\Bundle\ContentBundle\Content\Application\ResourceLoader\ResourceLoaderProvider;
+use Sulu\Bundle\MediaBundle\Infrastructure\Sulu\Content\ResourceLoader\MediaResourceLoader;
 
 class ResourceLoaderProviderTest extends TestCase
 {
@@ -25,6 +25,10 @@ class ResourceLoaderProviderTest extends TestCase
 
     public function testGetResourceLoader(): void
     {
+        if (!\class_exists(MediaResourceLoader::class)) {
+            $this->markTestSkipped('This test is skipped because the class "MediaResourceLoader" does not exist.');
+        }
+
         $mediaResourceLoader = $this->prophesize(MediaResourceLoader::class);
         $categoryResourceLoader = $this->prophesize(ResourceLoaderInterface::class);
         $resourceLoaderProvider = new ResourceLoaderProvider(
