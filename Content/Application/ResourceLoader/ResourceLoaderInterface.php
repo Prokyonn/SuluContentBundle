@@ -19,7 +19,7 @@ interface ResourceLoaderInterface
      * @param array<int|string> $ids
      * @param mixed[] $params
      *
-     * @return array<int|string, object> index must be the ID of the object
+     * @return array<int|string, mixed> index must be the ID of the object
      */
     public function load(array $ids, ?string $locale, array $params = []): array;
 
