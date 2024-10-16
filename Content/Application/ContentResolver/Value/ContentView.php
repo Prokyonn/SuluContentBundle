@@ -40,11 +40,7 @@ class ContentView
      */
     public static function createResolvable(string|int $id, string $resourceLoaderKey, array $view): self
     {
-        $resolvableResources = [
-            new ResolvableResource($id, $resourceLoaderKey),
-        ];
-
-        return new self($resolvableResources, $view);
+        return new self(new ResolvableResource($id, $resourceLoaderKey), $view);
     }
 
     /**
