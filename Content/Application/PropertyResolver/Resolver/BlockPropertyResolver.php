@@ -45,10 +45,10 @@ class BlockPropertyResolver implements PropertyResolverInterface
         foreach ($data as $block) {
             $type = $block['type'];
             $formMetadata = $blockTypes[$type];
-            $contentViews[] = [
-                'type' => $type,
-                ...$this->metadataResolver->resolveItems($formMetadata->getItems(), $block, $locale),
-            ];
+            $contentViews[] = \array_merge(
+                ['type' => $type],
+                $this->metadataResolver->resolveItems($formMetadata->getItems(), $block, $locale)
+            );
         }
 
         return ContentView::create($contentViews, []);
