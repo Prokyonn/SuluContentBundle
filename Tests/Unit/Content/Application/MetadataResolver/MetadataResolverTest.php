@@ -28,7 +28,7 @@ class MetadataResolverTest extends TestCase
     public function testResolve(): void
     {
         $propertyResolverProvider = new PropertyResolverProvider(
-            ['default' => new DefaultPropertyResolver()]
+            new \ArrayIterator(['default' => new DefaultPropertyResolver()])
         );
         $metadataResolver = new MetadataResolver($propertyResolverProvider);
 

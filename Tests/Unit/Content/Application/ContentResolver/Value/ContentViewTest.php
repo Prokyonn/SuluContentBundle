@@ -32,10 +32,8 @@ class ContentViewTest extends TestCase
         $contentView = ContentView::createResolvable(5, 'resourceLoaderKey', ['view' => 'data']);
 
         $content = $contentView->getContent();
-        $this->assertIsArray($content);
-        $this->assertCount(1, $content);
         /** @var ResolvableResource $resolvable */
-        $resolvable = $content[0];
+        $resolvable = $content;
         $this->assertSame(5, $resolvable->getId());
         $this->assertSame('resourceLoaderKey', $resolvable->getResourceLoaderKey());
         $this->assertSame(['view' => 'data'], $contentView->getView());

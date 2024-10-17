@@ -27,9 +27,9 @@ class BlockPropertyResolverTest extends TestCase
     public function testResolve(): void
     {
         $propertyResolverProvider = new PropertyResolverProvider(
-            [
+            new \ArrayIterator([
                 'default' => new DefaultPropertyResolver(),
-            ]
+            ])
         );
         $metadataResolver = new MetadataResolver($propertyResolverProvider);
 

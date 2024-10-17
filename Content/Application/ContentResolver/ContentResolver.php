@@ -158,21 +158,26 @@ class ContentResolver implements ContentResolverInterface
                     );
 
                     $resolvableResources = \array_merge_recursive($resolvableResources, $resolvedContentViews['resolvableResources']);
-                } else {
-                    if ($value instanceof ResolvableResource) {
-                        $resolvableResources[$value->getResourceLoaderKey()][] = $value->getId();
-                    }
 
-                    if ($value instanceof ContentView) {
-                        $result = $this->resolveContentView($value, $index);
-                    } else {
-                        $result['content'] = $value;
-                        $result['view'] = [];
-                    }
+                    $content[$name][$index] = $result['content'];
+                    $view[$name][$index] = $result['view'];
+                    continue;
                 }
 
-                $content[$name][$index] = $result['content'];
-                $view[$name][$index] = $result['view'];
+                if ($value instanceof ResolvableResource) {
+                    $resolvableResources[$value->getResourceLoaderKey()][] = $value->getId();
+                }
+
+                $result = $value instanceof ContentView ?
+                    $this->resolveContentView($value, $index) :
+                    [
+                        'content' => $value,
+                        'view' => [],
+                    ];
+
+                // TODO this has to be refactored
+                $content[$name] = \array_merge($content[$name], \is_array($result['content']) ? $result['content'] : [$index => $result['content']]); // @phpstan-ignore-line
+                $view[$name] = \array_merge($view[$name], $result['view']);
             }
         }
 

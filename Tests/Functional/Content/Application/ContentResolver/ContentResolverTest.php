@@ -15,11 +15,13 @@ namespace Sulu\Bundle\ContentBundle\Tests\Functional\Content\Application\Content
 
 use Sulu\Bundle\ContentBundle\Content\Application\ContentAggregator\ContentAggregatorInterface;
 use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\ContentResolverInterface;
+use Sulu\Bundle\ContentBundle\Tests\Functional\Traits\CreateCategoryTrait;
 use Sulu\Bundle\ContentBundle\Tests\Traits\CreateExampleTrait;
 use Sulu\Bundle\TestBundle\Testing\SuluTestCase;
 
 class ContentResolverTest extends SuluTestCase
 {
+    use CreateCategoryTrait;
     use CreateExampleTrait;
 
     private ContentResolverInterface $contentResolver;
@@ -36,6 +38,9 @@ class ContentResolverTest extends SuluTestCase
 
     public function testResolveContent(): void
     {
+        $category = static::createCategory(['key' => 'category-1']);
+        self::getEntityManager()->flush();
+
         $example1 = static::createExample(
             [
                 'en' => [
@@ -53,6 +58,9 @@ class ContentResolverTest extends SuluTestCase
                                 'text' => 'text-1',
                             ],
                         ],
+                        'excerptTitle' => 'excerpt-title-1',
+                        'excerptDescription' => 'excerpt-description-1',
+                        'excerptCategories' => [$category->getId()],
                     ],
                 ],
             ],

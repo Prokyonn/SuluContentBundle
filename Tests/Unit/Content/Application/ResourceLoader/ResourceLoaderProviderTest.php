@@ -29,13 +29,13 @@ class ResourceLoaderProviderTest extends TestCase
             $this->markTestSkipped('This test is skipped because the class "MediaResourceLoader" does not exist.');
         }
 
-        $mediaResourceLoader = $this->prophesize(MediaResourceLoader::class);
+        $mediaResourceLoader = $this->prophesize(ResourceLoaderInterface::class);
         $categoryResourceLoader = $this->prophesize(ResourceLoaderInterface::class);
         $resourceLoaderProvider = new ResourceLoaderProvider(
-            [
+            new \ArrayIterator([
                 'media' => $mediaResourceLoader->reveal(),
                 'category' => $categoryResourceLoader->reveal(),
-            ]
+            ])
         );
 
         self::assertSame($mediaResourceLoader->reveal(), $resourceLoaderProvider->getResourceLoader('media'));

@@ -15,12 +15,15 @@ namespace Sulu\Bundle\ContentBundle\Tests\Unit\Content\Application\ContentResolv
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Sulu\Bundle\AdminBundle\Metadata\FormMetadata\FieldMetadata;
 use Sulu\Bundle\AdminBundle\Metadata\FormMetadata\FormMetadata;
 use Sulu\Bundle\AdminBundle\Metadata\FormMetadata\TypedFormMetadata;
 use Sulu\Bundle\AdminBundle\Metadata\MetadataProviderInterface;
 use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Resolver\TemplateResolver;
 use Sulu\Bundle\ContentBundle\Content\Application\ContentResolver\Value\ContentView;
 use Sulu\Bundle\ContentBundle\Content\Application\MetadataResolver\MetadataResolver;
+use Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\PropertyResolverProvider;
+use Sulu\Bundle\ContentBundle\Content\Application\PropertyResolver\Resolver\DefaultPropertyResolver;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\DimensionContentInterface;
 use Sulu\Bundle\ContentBundle\Content\Domain\Model\TemplateInterface;
 use Sulu\Bundle\ContentBundle\Tests\Application\ExampleTestBundle\Entity\Example;
@@ -79,20 +82,25 @@ class TemplateResolverTest extends TestCase
         $dimensionContent->setTemplateKey('default');
         $dimensionContent->setTemplateData(['title' => 'Sulu']);
 
-        $formMetadata = $this->prophesize(TypedFormMetadata::class);
-        $formMetadata->getForms()
-            ->willReturn(['default' => new FormMetadata()]);
+        $formMetadata = new TypedFormMetadata();
+        $defaultFormMetadata = new FormMetadata();
+        $fieldMetadata = new FieldMetadata('title');
+        $fieldMetadata->setType('text_line');
+        $defaultFormMetadata->setItems([$fieldMetadata]);
+        $formMetadata->addForm('default', $defaultFormMetadata);
         $formMetadataProvider = $this->prophesize(MetadataProviderInterface::class);
         $formMetadataProvider->getMetadata('example', 'en', [])
-            ->willReturn($formMetadata->reveal());
+            ->willReturn($formMetadata);
 
-        $metadataResolver = $this->prophesize(MetadataResolver::class);
-        $metadataResolver->resolveItems([], ['title' => 'Sulu'], 'en')
-            ->willReturn([ContentView::create(['title' => 'Sulu'], [])]);
+        $metadataResolver = new MetadataResolver(
+            new PropertyResolverProvider(
+                new \ArrayIterator(['default' => new DefaultPropertyResolver()])
+            )
+        );
 
         $templateResolver = new TemplateResolver(
             $formMetadataProvider->reveal(),
-            $metadataResolver->reveal()
+            $metadataResolver
         );
 
         $contentView = $templateResolver->resolve($dimensionContent);
@@ -101,9 +109,8 @@ class TemplateResolverTest extends TestCase
         $content = $contentView->getContent();
         $this->assertIsArray($content);
         $this->assertCount(1, $content);
-        $titleContentView = $content[0];
-        $this->assertInstanceOf(ContentView::class, $titleContentView);
-        $this->assertSame(['title' => 'Sulu'], $titleContentView->getContent());
-        $this->assertSame([], $titleContentView->getView());
+        $this->assertInstanceOf(ContentView::class, $content['title']);
+        $this->assertSame('Sulu', $content['title']->getContent());
+        $this->assertSame([], $content['title']->getView());
     }
 }

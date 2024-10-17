@@ -23,10 +23,10 @@ class PropertyResolverProviderTest extends TestCase
     public function testGetPropertyResolver(): void
     {
         $propertyResolverProvider = new PropertyResolverProvider(
-            [
+            new \ArrayIterator([
                 'block' => new BlockPropertyResolver(),
                 'default' => new DefaultPropertyResolver(),
-            ]
+            ])
         );
 
         $this->assertInstanceOf(DefaultPropertyResolver::class, $propertyResolverProvider->getPropertyResolver('default'));
@@ -35,7 +35,7 @@ class PropertyResolverProviderTest extends TestCase
 
     public function testGetPropertyResolverWithInvalidType(): void
     {
-        $propertyResolverProvider = new PropertyResolverProvider(['default' => new DefaultPropertyResolver()]);
+        $propertyResolverProvider = new PropertyResolverProvider(new \ArrayIterator(['default' => new DefaultPropertyResolver()]));
 
         $propertyResolver = $propertyResolverProvider->getPropertyResolver('invalid');
 
